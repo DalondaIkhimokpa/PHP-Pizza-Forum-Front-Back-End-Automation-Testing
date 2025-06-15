@@ -1,10 +1,11 @@
+
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost/php_pizza_forum';
 
-describe('Pizza Form Test', function() {
+describe('Pizza Forum Tests', function() {
   this.timeout(30000);
   let driver;
 
@@ -13,14 +14,16 @@ describe('Pizza Form Test', function() {
       .addArguments(
         '--headless',
         '--no-sandbox',
-        '--disable-dev-shm-usage'
-      );
+        '--disable-dev-shm-usage',
+        '--window-size=1920,1080'
+      )
+      .setChromeBinaryPath('/usr/bin/chromium-browser');
 
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
       .build();
-  });
+  })
 
   it('should submit pizza form', async () => {
     await driver.get(`${BASE_URL}/templates/add.php`)

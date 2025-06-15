@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    
     services:
       mysql:
         image: mysql:8.0
@@ -20,28 +21,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP with Apache
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          extensions: mysqli
           tools: composer
 
       - name: Install Chrome and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip google-chrome-stable
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
-          wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION
-          wget https://chromedriver.storage.googleapis.com/$(cat LATEST_RELEASE_$CHROME_VERSION)/chromedriver_linux64.zip
-          sudo unzip chromedriver_linux64.zip -d /usr/local/bin
-          sudo chmod +x /usr/local/bin/chromedriver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
-      - name: Start PHP Server
+      - name: Verify Setup
         run: |
-          nohup php -S localhost:8080 > php-server.log 2>&1 &
-          echo "PHP server started on port 8080"
-          sleep 5
-          curl -v http://localhost:8080 || cat php-server.log
+          sudo systemctl start apache2
+          curl -v http://localhost/php_pizza_forum/
+          which chromedriver
+          chromedriver --version
+          chromium-browser --version
 
       - name: Run Tests
         run: npm test
@@ -51,7 +50,6 @@ jobs:
           DB_USER: demo
           DB_PASSWORD: test1234
           DB_NAME: pizza_forum
-
 
 
 

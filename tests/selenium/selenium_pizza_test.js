@@ -1,3 +1,4 @@
+
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
@@ -13,14 +14,16 @@ describe('Selenium Pizza Test', function() {
       .addArguments(
         '--headless',
         '--no-sandbox',
-        '--disable-dev-shm-usage'
-      );
+        '--disable-dev-shm-usage',
+        '--window-size=1920,1080'
+      )
+      .setChromeBinaryPath('/usr/bin/chromium-browser');
 
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
       .build();
-  });
+  })
 
   it('should load the homepage', async () => {
     await driver.get(`${BASE_URL}/index.php`);
