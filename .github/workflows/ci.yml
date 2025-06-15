@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     services:
       mysql:
@@ -27,23 +28,33 @@ jobs:
           php-version: '8.2'
           extensions: mysqli
           tools: composer
+          webroot-directory: php_pizza_forum
 
       - name: Install Chrome and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
+          sudo apt-get install -y wget gnupg
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          wget https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip
+          sudo unzip chromedriver_linux64.zip -d /usr/local/bin
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Verify Setup
         run: |
           sudo systemctl start apache2
           curl -v http://localhost/php_pizza_forum/
-          which chromedriver
+          google-chrome --version
           chromedriver --version
-          chromium-browser --version
 
       - name: Run Tests
-        run: npm test
+        run: |
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1024x768x16 &
+          npm test
         env:
           BASE_URL: http://localhost/php_pizza_forum
           DB_HOST: 127.0.0.1

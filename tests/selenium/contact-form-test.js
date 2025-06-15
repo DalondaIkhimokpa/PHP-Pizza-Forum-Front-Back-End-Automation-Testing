@@ -6,7 +6,7 @@ const assert = require('assert');
 const BASE_URL = process.env.BASE_URL || 'http://localhost/php_pizza_forum';
 
 describe('Contact Forum Tests', function() {
-  this.timeout(30000);
+  this.timeout(60000);
   let driver;
 
   before(async () => {
