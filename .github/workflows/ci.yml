@@ -1,24 +1,13 @@
 name: CI Tests
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    env:
-      DB_HOST: 127.0.0.1
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: pizza_forum
@@ -26,63 +15,40 @@ jobs:
           MYSQL_PASSWORD: test1234
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
-      selenium:
-        image: selenium/standalone-chrome
-        ports:
-          - 4444:4444
-        options: --shm-size=2g
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mysqli
-          coverage: none
 
-      - name: Install Composer dependencies
-        run: composer install
-
-      - name: Wait for MySQL
+      - name: Install Chrome and ChromeDriver
         run: |
-          for i in {1..10}; do
-            if mysqladmin ping -h "127.0.0.1" --silent; then
-              break
-            fi
-            sleep 5
-          done
+          sudo apt-get update
+          sudo apt-get install -y wget unzip google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
+          wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION
+          wget https://chromedriver.storage.googleapis.com/$(cat LATEST_RELEASE_$CHROME_VERSION)/chromedriver_linux64.zip
+          sudo unzip chromedriver_linux64.zip -d /usr/local/bin
+          sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Start PHP server
-        run: nohup php -S 127.0.0.1:8080 -t . > server.log 2>&1 &
+      - name: Start PHP Server
+        run: |
+          php -S localhost:8080 &
+          echo "PHP server running at http://localhost/php_pizza_forum/"
+          sleep 5 # Wait for server to start
 
-      - name: Wait for PHP server
-        run: sleep 5
-
-      - name: Wait for Selenium and PHP
-        run: sleep 10
-
-      - name: Run PHPUnit (PHP tests)
-        run: ./run-tests.sh
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install Mocha & Selenium packages
-        run: npm install
-
-      - name: Run Mocha Selenium Tests
+      - name: Run Tests
         run: npm test
+        env:
+          BASE_URL: http://localhost/php_pizza_forum/
+          DB_HOST: 127.0.0.1
+          DB_USER: demo
+          DB_PASSWORD: test1234
+          DB_NAME: pizza_forum
 
 
 

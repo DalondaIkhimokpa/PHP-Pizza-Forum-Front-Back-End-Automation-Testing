@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost/php_pizza_forum'; 'http://localhost/php_pizza_forum';
+const BASE_URL = process.env.BASE_URL ||  'http://localhost/php_pizza_forum/';
 const { Builder, By } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
