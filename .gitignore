@@ -1,0 +1,6 @@
+.txt
+/vendor/
+.env
+config/conn_db.php
+test_db.php
+Notes

@@ -1,0 +1,18 @@
+PHPUnit 10.5.46 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.7
+Configuration: /Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/phpunit.xml
+
+.......EE..                                                       11 / 11 (100%)
+
+Time: 00:01.080, Memory: 8.00 MB
+
+There was 1 error:
+
+1) SeleniumPizzaTest
+Error: Access to undeclared static property SeleniumPizzaTest::$webDriver
+
+/Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/tests/SeleniumPizzaTest.php:13
+
+ERRORS!
+Tests: 11, Assertions: 28, Errors: 1.

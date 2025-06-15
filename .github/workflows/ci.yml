@@ -1,0 +1,59 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: pizza_forum
+          MYSQL_USER: demo
+          MYSQL_PASSWORD: test1234
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mysqli
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..10}; do
+            if mysqladmin ping -h "127.0.0.1" --silent; then
+              break
+            fi
+            sleep 5
+          done
+
+      - name: Run tests
+        run: ./run-tests.sh
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: demo
+          DB_PASSWORD: test1234
+          DB_NAME: pizza_forum
+ 

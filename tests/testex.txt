@@ -1,0 +1,26 @@
+./vendor/bin/phpunit --configuration phpunit.xml
+
+What the Tests Do
+The tests are organized into several files:
+
+1.DatabaseTest.php: Tests that your database connection works and that the required tables exist.
+2.PizzaTest.php: Tests CRUD (Create, Read, Update, Delete) operations for pizzas:
+Creating a new pizza
+Searching for pizzas
+Deleting pizzas
+3.ValidationTest.php: Tests input validation:
+Email validation
+Title validation (letters and spaces only)
+4.Ingredients validation (comma-separated list)
+IntegrationTest.php: Tests the full workflow:
+Creating a pizza
+Retrieving it
+Searching for it
+Deleting it
+Verifying deletion
+
+Important Notes
+1.Database Configuration: The tests use the same database connection as your application. Make sure your database is set up correctly before running the tests.
+2.Test Data: The tests will create and delete test data in your database. They're designed to clean up after themselves, but be aware that they will modify your database.
+3.PHPUnit Version: The tests are written for PHPUnit 11.3. If you use a different version, you might need to adjust the tests.
+4.Test Environment: The tests assume a local development environment. If you're running in a different environment, you might need to adjust the database connection parameters in the test files.

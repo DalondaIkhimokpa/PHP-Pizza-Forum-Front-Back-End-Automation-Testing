@@ -1,0 +1,10 @@
+PHPUnit 10.5.46 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.7
+Configuration: /Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/phpunit.xml
+
+...........                                                       11 / 11 (100%)
+
+Time: 00:02.537, Memory: 8.00 MB
+
+OK (11 tests, 29 assertions)
