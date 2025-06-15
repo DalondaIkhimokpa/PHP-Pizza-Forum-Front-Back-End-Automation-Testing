@@ -51,7 +51,7 @@ php tests/Selenium/PizzaSubmissionTest.php
 1. Clone the repository:
 
    ```
-   git clone https://github.com/yourusername/php-pizza-forum.git
+   git clone https://github.com/DalondaIkhimokpa/PHP-Pizza-Forum-Front-Back-End-Automation-Testing
    ```
 2. Import the database:
 
@@ -187,4 +187,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For questions or feedback, please reach out to us at contact@phppizzaforum.com
+For questions or feedback, please reach out to us at https://github.com/DalondaIkhimokpa/PHP-Pizza-Forum-Front-Back-End-Automation-Testing
