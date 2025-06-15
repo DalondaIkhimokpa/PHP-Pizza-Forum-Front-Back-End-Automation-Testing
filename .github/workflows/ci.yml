@@ -22,17 +22,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP with Apache
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: mysqli
           tools: composer
-          webroot-directory: php_pizza_forum
+
+      - name: Configure Apache
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apache2 libapache2-mod-php
+          sudo mkdir -p /var/www/html/php_pizza_forum
+          sudo cp -r . /var/www/html/php_pizza_forum/
+          sudo chown -R www-data:www-data /var/www/html/php_pizza_forum
+          
+          # Create Apache configuration
+          echo "<VirtualHost *:80>
+              DocumentRoot /var/www/html/php_pizza_forum
+              <Directory /var/www/html/php_pizza_forum>
+                  Options Indexes FollowSymLinks
+                  AllowOverride All
+                  Require all granted
+              </Directory>
+          </VirtualHost>" | sudo tee /etc/apache2/sites-available/php_pizza_forum.conf
+          
+          sudo a2dissite 000-default
+          sudo a2ensite php_pizza_forum
+          sudo a2enmod rewrite
+          sudo systemctl restart apache2
 
       - name: Install Chrome and ChromeDriver
         run: |
-          sudo apt-get update
           sudo apt-get install -y wget gnupg
           wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
@@ -45,7 +66,6 @@ jobs:
 
       - name: Verify Setup
         run: |
-          sudo systemctl start apache2
           curl -v http://localhost/php_pizza_forum/
           google-chrome --version
           chromedriver --version

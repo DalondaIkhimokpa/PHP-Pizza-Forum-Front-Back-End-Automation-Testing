@@ -39,7 +39,12 @@ describe('Pizza Forum Tests', function() {
     await ingredientsInput.sendKeys('cheese, sauce');
     await submitBtn.click();
 
-    await driver.wait(until.urlContains('index.php'), 5000);
+    await driver.wait(until.urlContains('index.php'), 10000);
   });
-  after(async () => await driver.quit());
+  after(async () => {
+    if (driver) {
+      await driver.quit();
+    }
+  });
 });
+

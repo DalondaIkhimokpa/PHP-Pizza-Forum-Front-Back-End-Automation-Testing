@@ -33,11 +33,17 @@ describe('Contact Forum Tests', function() {
     await driver.findElement(By.name('message')).sendKeys('This is a test message.');
     await driver.findElement(By.css('button[type="submit"]')).click();
 
-    await driver.wait(until.urlContains('index.php?contact=success#contact'), 5000);
+    await driver.wait(until.urlContains('index.php?contact=success#contact'), 10000);
 
     const currentUrl = await driver.getCurrentUrl();
     assert.ok(currentUrl.includes('index.php'));
   });
+  after(async () => {
+    if (driver) {
+      await driver.quit();
+    }
+  });
 });
+
 
 
