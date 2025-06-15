@@ -3,8 +3,21 @@ PHPUnit 10.5.46 by Sebastian Bergmann and contributors.
 Runtime:       PHP 8.4.7
 Configuration: /Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/phpunit.xml
 
-...........                                                       11 / 11 (100%)
+.......EE..                                                       11 / 11 (100%)
 
-Time: 00:02.537, Memory: 8.00 MB
+Time: 00:00.084, Memory: 8.00 MB
 
-OK (11 tests, 29 assertions)
+There was 1 error:
+
+1) SeleniumPizzaTest
+Facebook\WebDriver\Exception\Internal\WebDriverCurlException: Curl error thrown for http POST to /session with params: {"capabilities":{"firstMatch":[{"browserName":"chrome"}]},"desiredCapabilities":{"browserName":"chrome","platform":"ANY"}}
+
+Failed to connect to localhost port 9515 after 0 ms: Could not connect to server
+
+/Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/vendor/php-webdriver/webdriver/lib/Exception/Internal/WebDriverCurlException.php:20
+/Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/vendor/php-webdriver/webdriver/lib/Remote/HttpCommandExecutor.php:328
+/Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/vendor/php-webdriver/webdriver/lib/Remote/RemoteWebDriver.php:129
+/Applications/XAMPP/xamppfiles/htdocs/php_pizza_forum/tests/SeleniumPizzaTest.php:16
+
+ERRORS!
+Tests: 11, Assertions: 28, Errors: 1.

@@ -1,6 +1,9 @@
 <?php
 // Include database connection
 include('../config/conn_db.php');
+if (!$connection) {
+    die('DB connection failed: ' . mysqli_connect_error());
+}
 
 $email = $title = $ingredients = '';
 $errors = array('email' => '', 'title' => '', 'ingredients' => '');

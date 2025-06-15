@@ -1,0 +1,21 @@
+{
+  "name": "php_pizza_forum",
+  "version": "1.0.0",
+  "description": "A community-driven platform for pizza enthusiasts to share and discover amazing pizza recipes.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+  "test": "mocha tests/selenium/*.js",
+  "test-selenium": "mocha tests/selenium/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chromedriver": "^137.0.3",
+    "mocha": "^11.6.0",
+    "selenium-webdriver": "^4.33.0"
+  }
+}

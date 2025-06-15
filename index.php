@@ -3,6 +3,7 @@
 // Include database connection file
 include('config/conn_db.php');
 
+
 // write query for all pizzas
 $sql = "SELECT id, title, email, ingredients FROM pizzas order by created_at";
 // get the query results
