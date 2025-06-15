@@ -4,3 +4,4 @@
 config/conn_db.php
 test_db.php
 Notes
+*.DS_Store
