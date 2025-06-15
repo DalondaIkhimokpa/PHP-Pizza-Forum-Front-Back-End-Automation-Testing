@@ -8,13 +8,16 @@ describe('Contact Form Test', function () {
 
   before(async () => {
     const options = new chrome.Options();
-    options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
-
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
+    options.addArguments(`--user-data-dir=/tmp/chrome-profile-${Math.floor(Math.random() * 10000)}`);
+  
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
       .build();
   });
+  
 
   after(async () => {
     if (driver) {
