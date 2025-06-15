@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    
     services:
       mysql:
         image: mysql:8.0
@@ -21,31 +20,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Apache and PHP
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y apache2 libapache2-mod-php php-mysql
-          sudo mkdir -p /var/www/php_pizza_forum
-          sudo cp -r . /var/www/php_pizza_forum/
-          sudo chown -R www-data:www-data /var/www/php_pizza_forum
-          
-          # Configure Apache
-          echo "<VirtualHost *:80>
-              DocumentRoot /var/www/php_pizza_forum
-              <Directory /var/www/php_pizza_forum>
-                  Options Indexes FollowSymLinks
-                  AllowOverride All
-                  Require all granted
-              </Directory>
-          </VirtualHost>" | sudo tee /etc/apache2/sites-available/php_pizza_forum.conf
-          
-          sudo a2dissite 000-default
-          sudo a2ensite php_pizza_forum
-          sudo a2enmod rewrite
-          sudo systemctl restart apache2
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
 
       - name: Install Chrome and ChromeDriver
         run: |
+          sudo apt-get update
           sudo apt-get install -y wget unzip google-chrome-stable
           CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
           wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION
@@ -53,10 +36,12 @@ jobs:
           sudo unzip chromedriver_linux64.zip -d /usr/local/bin
           sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Verify Apache
+      - name: Start PHP Server
         run: |
-          curl -v http://localhost/php_pizza_forum/
-          curl -v http://localhost/php_pizza_forum/templates/add.php
+          nohup php -S localhost:8080 > php-server.log 2>&1 &
+          echo "PHP server started on port 8080"
+          sleep 5
+          curl -v http://localhost:8080 || cat php-server.log
 
       - name: Run Tests
         run: npm test
@@ -66,6 +51,7 @@ jobs:
           DB_USER: demo
           DB_PASSWORD: test1234
           DB_NAME: pizza_forum
+
 
 
 
