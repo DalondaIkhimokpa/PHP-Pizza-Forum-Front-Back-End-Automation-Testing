@@ -1,29 +1,29 @@
-const BASE_URL = process.env.BASE_URL ||  'http://localhost/php_pizza_forum/';
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+const assert = require('assert');
 
-describe('Pizza Form Test', function () {
+const BASE_URL = process.env.BASE_URL || 'http://localhost/php_pizza_forum';
+
+describe('Pizza Form Test', function() {
   this.timeout(30000);
   let driver;
 
-  before(async function () {
+  before(async () => {
     const options = new chrome.Options()
-      .addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage', '--user-data-dir=/tmp/chrome-profile');
+      .addArguments(
+        '--headless',
+        '--no-sandbox',
+        '--disable-dev-shm-usage'
+      );
 
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
       .build();
-
-    await new Promise(resolve => setTimeout(resolve, 5000)); // wait for server
   });
 
-  after(async function () {
-    if (driver) await driver.quit();
-  });
-
-  it('should submit the pizza form and return to index page', async function () {
-    await driver.get(`${BASE_URL}/add.php`);
+  it('should submit pizza form', async () => {
+    await driver.get(`${BASE_URL}/templates/add.php`)
     const nameInput = await driver.findElement(By.name('name'));
     const emailInput = await driver.findElement(By.name('email'));
     const titleInput = await driver.findElement(By.name('title'));
@@ -38,5 +38,5 @@ describe('Pizza Form Test', function () {
 
     await driver.wait(until.urlContains('index.php'), 5000);
   });
+  after(async () => await driver.quit());
 });
-
