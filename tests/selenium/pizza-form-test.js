@@ -1,4 +1,4 @@
-const BASE_URL = process.env.CI ? 'http://localhost:8080' : 'http://localhost:8080';
+const BASE_URL = 'http://localhost/php_pizza_forum'; 'http://localhost/php_pizza_forum';
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
@@ -23,7 +23,7 @@ describe('Pizza Form Test', function () {
   });
 
   it('should submit the pizza form and return to index page', async function () {
-    await driver.get(`${BASE_URL}/index.php`);
+    await driver.get(`${BASE_URL}/add.php`);
     const nameInput = await driver.findElement(By.name('name'));
     const emailInput = await driver.findElement(By.name('email'));
     const titleInput = await driver.findElement(By.name('title'));

@@ -1,4 +1,4 @@
-const BASE_URL = process.env.CI ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:8080';
+const BASE_URL = 'http://localhost/php_pizza_forum'; 'http://localhost/php_pizza_forum';
 const { Builder, By } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
@@ -25,7 +25,7 @@ describe('Pizza Forum Page Test', function () {
   });
 
   it('should load the homepage', async () => {
-    await driver.get(BASE_URL);
+    await driver.get(`${BASE_URL}/index.php`);
     const title = await driver.getTitle();
     assert.ok(title.includes('Pizza') || title.length > 0);
   });
