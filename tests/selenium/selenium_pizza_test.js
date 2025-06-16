@@ -27,8 +27,8 @@ describe('Selenium Pizza Test', function() {
 
   it('should load homepage', async () => {
     await driver.get(BASE_URL);
-    await driver.wait(until.titleIs('Pizza Forum'), 10000);
-    assert.equal(await driver.getTitle(), 'Pizza Forum');
+    await driver.wait(until.titleIs('PHP Pizza Forum'), 10000);
+    assert.equal(await driver.getTitle(), 'Page title should contain "Pizza');
   });
 
   after(async () => {
