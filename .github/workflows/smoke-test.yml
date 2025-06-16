@@ -58,5 +58,5 @@ jobs:
 
     - name: Run smoke test
       env:
-        BASE_URL: http://localhost:8080
+        BASE_URL: http://localhost/php_pizza_forum/
       run: npx mocha tests/selenium/smoke-test.js
