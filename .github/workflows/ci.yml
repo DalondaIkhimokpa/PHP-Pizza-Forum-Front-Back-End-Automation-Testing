@@ -22,23 +22,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP Server
+      - name: Configure Apache
         run: |
-          php -S 127.0.0.1:8000 -t . &
-          sleep 5
-          curl -v http://127.0.0.1:8000/
+          sudo apt-get update
+          sudo apt-get install -y apache2 libapache2-mod-php
+          sudo mkdir -p /var/www/html/php_pizza_forum
+          sudo cp -r . /var/www/html/php_pizza_forum/
+          sudo chown -R www-data:www-data /var/www/html/php_pizza_forum
+          
+          echo "<VirtualHost *:80>
+              DocumentRoot /var/www/html/php_pizza_forum
+              <Directory /var/www/html/php_pizza_forum>
+                  Options Indexes FollowSymLinks
+                  AllowOverride All
+                  Require all granted
+              </Directory>
+          </VirtualHost>" | sudo tee /etc/apache2/sites-available/php_pizza_forum.conf
+          
+          sudo a2dissite 000-default
+          sudo a2ensite php_pizza_forum
+          sudo a2enmod rewrite
+          sudo systemctl restart apache2
 
-      - name: Install Chrome & ChromeDriver
+      - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: 'stable'
 
-      - name: Run Selenium Tests
+      - name: Verify Setup
         run: |
-          npm install
-          npm test
+          curl -v http://localhost/php_pizza_forum/
+          google-chrome --version
+
+      - name: Run Tests
+        run: npm test
         env:
-          BASE_URL: http://127.0.0.1:8000
+          BASE_URL: http://localhost/php_pizza_forum
           DB_HOST: 127.0.0.1
           DB_USER: demo
           DB_PASSWORD: test1234

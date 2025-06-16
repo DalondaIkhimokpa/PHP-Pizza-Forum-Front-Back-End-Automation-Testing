@@ -1,6 +1,9 @@
+
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
+
+const BASE_URL = process.env.BASE_URL || 'http://localhost/php_pizza_forum';
 
 describe('Frontend Tests', function() {
   this.timeout(15000);
@@ -24,7 +27,7 @@ describe('Frontend Tests', function() {
     await driver.findElement(By.name('message')).sendKeys('Test message');
     await driver.findElement(By.css('button[type="submit"]')).click();
     
-    await driver.wait(until.urlContains('?contact=success'), 5000);
+    await driver.wait(until.urlContains('?contact=success'), 10000);
   });
 
   it('should load pizza form', async () => {
