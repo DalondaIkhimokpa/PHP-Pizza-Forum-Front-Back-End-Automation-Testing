@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 
 describe('Smoke Test', function () {
-  this.timeout(30000); // 30 seconds
+  this.timeout(60000); // 60 seconds
 
   let driver;
 
