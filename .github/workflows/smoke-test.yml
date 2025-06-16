@@ -67,11 +67,11 @@ jobs:
 
       - name: Check if site is up
         run: |
-          curl -I http://localhost:8080 || (echo "Site not up!" && exit 1)
+          curl -I http://localhost:8080/php_pizza_forum/ || (echo "Site not up!" && exit 1)
 
       - name: Run Selenium Smoke Test
         env:
-          BASE_URL: http://localhost:8080
+          BASE_URL: http://localhost:8080/php_pizza_forum/
         run: |
           npx mocha tests/selenium/smoke-test.js
 
