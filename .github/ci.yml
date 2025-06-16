@@ -1,9 +1,9 @@
-name: Selenium Tests
+name: Contact Form Selenium Test
 
 on: [push, pull_request]
 
 jobs:
-  test:
+  selenium:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,15 +21,15 @@ jobs:
           sudo apt-get install -y google-chrome-stable
           google-chrome --version
 
-      - name: ⚙️ Install Dependencies
+      - name: 📦 Install NPM Dependencies
         run: npm install
 
       - name: 🐘 Start PHP Server
         run: |
           php -S localhost:8080 &> php-server.log &
           echo "⏳ Waiting for PHP server..."
-          for i in {1..10}; do
-            if curl -sSf http://localhost:8080/php_pizza_forum/ > /dev/null; then
+          for i in {1..15}; do
+            if curl -sSf http://localhost:8080/php_pizza_forum/contact.php > /dev/null; then
               echo "✅ PHP server is up"
               break
             else
@@ -37,4 +37,21 @@ jobs:
               sleep 1
             fi
           done
-      
+
+      - name: 🧪 Run Contact Form Selenium Test
+        env:
+          BASE_URL: http://localhost:8080/php_pizza_forum/
+        run: npx mocha tests/selenium/contact-form.test.js
+
+      - name: 📁 Upload failure screenshots (if any)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contact-form-screenshots
+          path: '*.png'
+
+
+
+
+
+        

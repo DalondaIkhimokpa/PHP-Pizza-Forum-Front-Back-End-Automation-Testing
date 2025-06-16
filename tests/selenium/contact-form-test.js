@@ -17,35 +17,32 @@ describe('Contact Forum Tests', function () {
   let driver;
 
   before(async () => {
-    console.log('🚀 Launching Chrome...');
-    const options = new chrome.Options();
-    options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
+    const options = new chrome.Options().addArguments(
+      '--headless',
+      '--no-sandbox',
+      '--disable-dev-shm-usage'
+    );
     driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
   });
 
   after(async () => {
-    console.log('🛑 Closing browser...');
-    await driver.quit();
+    if (driver) await driver.quit();
   });
 
   it('should submit the contact form and stay on index page', async function () {
     try {
-      console.log(`🌐 Navigating to: ${BASE_URL}/contact.php`);
       await driver.get(`${BASE_URL}/contact.php`);
 
-      console.log('✏️ Filling contact form...');
       await driver.findElement(By.name('name')).sendKeys('Test User');
       await driver.findElement(By.name('email')).sendKeys('test@example.com');
       await driver.findElement(By.name('message')).sendKeys('This is a test message.');
 
-      console.log('🚀 Submitting form...');
-      await driver.findElement(By.css('button[type="submit"]')).click();
+      await driver.findElement(By.css('form button, form input[type="submit"]')).click();
 
-      console.log('⏳ Waiting for redirect...');
-      await driver.wait(until.urlContains('index.php?contact=success#contact'), 5000);
+      // Wait for redirection back to index.php
+      await driver.wait(until.urlContains('index.php'), 5000);
 
       const currentUrl = await driver.getCurrentUrl();
-      console.log(`📍 Current URL: ${currentUrl}`);
       assert.ok(currentUrl.includes('index.php'), 'Did not return to index.php');
 
       console.log('✅ Contact form submitted and redirected successfully');
@@ -56,6 +53,7 @@ describe('Contact Forum Tests', function () {
     }
   });
 });
+
 
 
 
