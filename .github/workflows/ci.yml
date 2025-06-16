@@ -28,7 +28,7 @@ jobs:
       DB_USER: demo
       DB_PASSWORD: test1234
       DB_NAME: pizza_forum
-      BASE_URL: http://localhost:8080
+      BASE_URL: http://localhost/php_pizza_forum/index.php
 
     steps:
       - uses: actions/checkout@v3
