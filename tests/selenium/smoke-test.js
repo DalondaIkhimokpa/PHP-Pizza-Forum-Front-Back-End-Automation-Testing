@@ -21,6 +21,7 @@ describe('Smoke Test', function () {
   it('should load homepage', async () => {
     await driver.get(process.env.BASE_URL);
     const title = await driver.getTitle();
+    console.log('🔍 Page title:', title);
     assert.match(title, /PHP Pizza Forum/i, 'Page title should be "PHP Pizza Forum"');
   });
 
