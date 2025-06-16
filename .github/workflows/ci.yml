@@ -46,6 +46,7 @@ jobs:
           DB_USER: demo
           DB_PASSWORD: test1234
           DB_NAME: pizza_forum
+          App_URL: http://localhost/php_pizza_forum/
 
 
 
