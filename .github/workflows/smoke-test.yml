@@ -21,53 +21,58 @@ jobs:
           --health-retries=5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, pdo, mysqli
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, mysqli
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y curl unzip jq default-jre
-        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-        sudo apt-get install -y nodejs
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl unzip jq default-jre
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
 
-    - name: Install Google Chrome
-      run: |
-        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+      - name: Install Google Chrome
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
-    - name: Install ChromeDriver
-      run: |
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-        JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
-        CHROMEDRIVER_URL=$(curl -s $JSON_URL | jq -r --arg ver "$CHROME_VERSION" '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url')
+      - name: Install ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
+          CHROMEDRIVER_URL=$(curl -s $JSON_URL | jq -r --arg ver "$CHROME_VERSION" '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url')
 
-        echo "Downloading ChromeDriver from $CHROMEDRIVER_URL"
-        curl -sS -o chromedriver.zip "$CHROMEDRIVER_URL"
-        unzip chromedriver.zip
-        sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-        sudo chmod +x /usr/local/bin/chromedriver
+          echo "Downloading ChromeDriver from $CHROMEDRIVER_URL"
+          curl -sS -o chromedriver.zip "$CHROMEDRIVER_URL"
+          unzip chromedriver.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
 
-    - name: Start PHP Server
-      run: |
-        php -S localhost:8080 -t . > /dev/null 2>&1 &
-        sleep 3
+      - name: Install Node.js test dependencies
+        run: |
+          npm install mocha selenium-webdriver
 
-    - name: Install Node.js test dependencies
-      run: |
-        npm install mocha selenium-webdriver
+      - name: Start PHP Server
+        run: |
+          php -S localhost:8080 -t . > /dev/null 2>&1 &
+          sleep 3
 
-    - name: Run Selenium Smoke Test
-      env:
-        BASE_URL: http://localhost:8080
-      run: |
-        npx mocha tests/selenium/smoke-test.js
+      - name: Check if site is up
+        run: |
+          curl -I http://localhost:8080 || (echo "Site not up!" && exit 1)
+
+      - name: Run Selenium Smoke Test
+        env:
+          BASE_URL: http://localhost:8080
+        run: |
+          npx mocha tests/selenium/smoke-test.js
+
 
