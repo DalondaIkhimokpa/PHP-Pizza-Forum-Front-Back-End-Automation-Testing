@@ -1,15 +1,10 @@
 -- $connection = mysqli_connect(
---    'localhost',    // host
---     'demo',        // username
---      'test123',    // password
+--     'localhost',    // host
+--     'usernam',        // username
+--     'password',    // password
 --     'pizza_forum'  // database
---  );
-$connection = mysqli_connect(
-    'localhost',          // host
-    'root',              // username ← change if needed
-    'workbench123',     // password ← your actual password
-    'pizza_forum'       // database
-);
+-- );
+
  // Check connection
  if (!$connection) {
      die("Connection failed: " . mysqli_connect_error());
@@ -21,7 +16,7 @@ $connection = mysqli_connect(
 CREATE DATABASE pizza_forum;
 USE pizza_forum;
 
--- CREATE USER 'demo'@'localhost' IDENTIFIED BY 'test1234';
+-- CREATE USER 'username'@'localhost' IDENTIFIED BY password';
 -- GRANT ALL PRIVILEGES ON pizza_forum.* TO 'demo'@'localhost';
 -- FLUSH PRIVILEGES;
 
