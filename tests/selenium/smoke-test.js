@@ -8,7 +8,7 @@ describe('Smoke Test', function () {
 
   before(async () => {
     const options = new chrome.Options();
-    options.addArguments('--headless=new'); // <-- use "--headless" or "--headless=new" for newer versions
+    options.addArguments('--headless=new');
     options.addArguments('--no-sandbox');
     options.addArguments('--disable-dev-shm-usage');
 
@@ -21,10 +21,11 @@ describe('Smoke Test', function () {
   it('should load homepage', async () => {
     await driver.get(process.env.BASE_URL);
     const title = await driver.getTitle();
-    assert.match(title, /Pizza/i, 'Page title should contain "Pizza"');
+    assert.match(title, /Welcome to Pizza Forum/i, 'Page title should be "Welcome to Pizza Forum"');
   });
 
   after(async () => {
     if (driver) await driver.quit();
   });
 });
+

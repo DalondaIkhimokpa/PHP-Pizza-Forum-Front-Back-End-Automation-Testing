@@ -1,16 +1,16 @@
-name: Smoke Test
+name: Run Selenium Smoke Test
 
 on: [push, pull_request]
 
 jobs:
-  smoke-test:
+  selenium-smoke-test:
     runs-on: ubuntu-latest
 
     services:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: test1234
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: pizza_forum
         ports:
           - 3306:3306
@@ -21,16 +21,21 @@ jobs:
           --health-retries=5
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
       with:
-        node-version: '20'
+        php-version: '8.2'
+        extensions: mbstring, pdo, mysqli
 
-    - name: Install Node.js dependencies
-      run: npm ci
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl unzip jq default-jre
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+        sudo apt-get install -y nodejs
 
     - name: Install Google Chrome
       run: |
@@ -39,7 +44,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
 
-    - name: Install matching ChromeDriver
+    - name: Install ChromeDriver
       run: |
         CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
         JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
@@ -53,10 +58,16 @@ jobs:
 
     - name: Start PHP Server
       run: |
-        php -S localhost:8080 -t . &
-        sleep 5
+        php -S localhost:8080 -t . > /dev/null 2>&1 &
+        sleep 3
 
-    - name: Run smoke test
+    - name: Install Node.js test dependencies
+      run: |
+        npm install mocha selenium-webdriver
+
+    - name: Run Selenium Smoke Test
       env:
         BASE_URL: http://localhost:8080
-      run: npx mocha tests/selenium/smoke-test.js
+      run: |
+        npx mocha tests/selenium/smoke-test.js
+
