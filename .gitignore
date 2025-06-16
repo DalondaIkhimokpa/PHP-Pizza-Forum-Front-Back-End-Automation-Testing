@@ -8,3 +8,4 @@ Notes
 # .gitignore
 .env
 .env.*
+.sql
