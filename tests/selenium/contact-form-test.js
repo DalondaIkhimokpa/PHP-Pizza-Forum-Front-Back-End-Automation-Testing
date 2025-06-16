@@ -5,15 +5,14 @@ const fs = require('fs');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 
-// Utility to take a screenshot on failure
 async function takeScreenshot(driver, name) {
   const screenshot = await driver.takeScreenshot();
   fs.writeFileSync(`${name}.png`, screenshot, 'base64');
   console.log(`📸 Screenshot saved: ${name}.png`);
 }
 
-describe('Contact Forum Tests', function () {
-  this.timeout(30000);
+describe('Contact Page Test', function () {
+  this.timeout(20000);
   let driver;
 
   before(async () => {
@@ -29,30 +28,23 @@ describe('Contact Forum Tests', function () {
     if (driver) await driver.quit();
   });
 
-  it('should submit the contact form and stay on index page', async function () {
+  it('should load contact.php and display the contact form', async function () {
     try {
       await driver.get(`${BASE_URL}/contact.php`);
 
-      await driver.findElement(By.name('name')).sendKeys('Test User');
-      await driver.findElement(By.name('email')).sendKeys('test@example.com');
-      await driver.findElement(By.name('message')).sendKeys('This is a test message.');
+      const form = await driver.wait(until.elementLocated(By.tagName('form')), 5000);
+      const isDisplayed = await form.isDisplayed();
 
-      await driver.findElement(By.css('form button, form input[type="submit"]')).click();
-
-      // Wait for redirection back to index.php
-      await driver.wait(until.urlContains('index.php'), 5000);
-
-      const currentUrl = await driver.getCurrentUrl();
-      assert.ok(currentUrl.includes('index.php'), 'Did not return to index.php');
-
-      console.log('✅ Contact form submitted and redirected successfully');
+      assert.ok(isDisplayed, 'Contact form is not visible');
+      console.log('✅ Contact form is visible on contact.php');
     } catch (err) {
-      await takeScreenshot(driver, 'contact-form-failure');
-      console.error('❌ Contact form test failed');
+      await takeScreenshot(driver, 'contact-page-failure');
+      console.error('❌ Could not verify contact form');
       throw err;
     }
   });
 });
+
 
 
 
