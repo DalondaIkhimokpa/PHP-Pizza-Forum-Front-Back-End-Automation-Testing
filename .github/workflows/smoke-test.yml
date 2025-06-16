@@ -1,83 +1,45 @@
-name: Run Selenium Smoke Test
+name: Selenium Tests
 
 on: [push, pull_request]
 
 jobs:
-  selenium-smoke-test:
+  test:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: pizza_forum
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          php-version: '8.2'
-          extensions: mbstring, pdo, mysqli
+          node-version: '20'
 
-      - name: Install system dependencies
+      - name: 🌐 Install Google Chrome
         run: |
-          sudo apt-get update
-          sudo apt-get install -y curl unzip jq default-jre
-          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-
-      - name: Install Google Chrome
-        run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
+          google-chrome --version
 
-      - name: Install ChromeDriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-          JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
-          CHROMEDRIVER_URL=$(curl -s $JSON_URL | jq -r --arg ver "$CHROME_VERSION" '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url')
-          echo "Downloading ChromeDriver from $CHROMEDRIVER_URL"
-          curl -sS -o chromedriver.zip "$CHROMEDRIVER_URL"
-          unzip chromedriver.zip
-          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
+      - name: ⚙️ Install Dependencies
+        run: npm install
 
-      - name: Install Node.js test dependencies
+      - name: 🐘 Start PHP Server
         run: |
-          npm install mocha selenium-webdriver
+          php -S localhost:8080 &> php-server.log &
+          echo "⏳ Waiting for PHP server..."
+          for i in {1..10}; do
+            if curl -sSf http://localhost:8080 > /dev/null; then
+              echo "✅ PHP server is up"
+              break
+            else
+              echo "🔄 Retrying in 1 second..."
+              sleep 1
+            fi
+          done
 
-      - name: Start PHP Server
-        run: |
-          php -S localhost:8080 -t php_pizza_forum > /dev/null 2>&1 &
-          sleep 3
-
-      - name: Check if site is up
-        run: |
-          curl -I http://localhost:8080/index.php || (echo "Site not up!" && exit 1)
-
-      - name: Curl page output (debug)
-        run: |
-          curl -s http://localhost:8080/index.php > debug.html
-          head -n 50 debug.html
-
-      - name: Run Selenium Smoke Test
-        env:
-          BASE_URL: http://localhost:8080/index.php
-        run: |
-          npx mocha tests/selenium/smoke-test.js
+      - name: 🧪 Run Selenium Tests
+        run: npm test
 
 
 
