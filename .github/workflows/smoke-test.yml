@@ -29,7 +29,7 @@ jobs:
           php -S localhost:8080 -t php_pizza_forum/ > php-server.log 2>&1 &
           echo "⏳ Waiting for PHP server to become ready..."
           for i in {1..10}; do
-            if curl -sSf http://localhost:8080/php_pizza_forum/ > /dev/null; then
+            if curl -sSf http://localhost:8080/index.php> /dev/null; then
               echo "✅ PHP server is up!"
               break
             else
@@ -40,6 +40,6 @@ jobs:
       
       - name: 🧪 Run Selenium Tests
         env:
-          BASE_URL: http://localhost:8080/php_pizza_forum/
+          BASE_URL: http://localhost:8080/index.php
         run: npx mocha tests/selenium/smoke-test.js
       

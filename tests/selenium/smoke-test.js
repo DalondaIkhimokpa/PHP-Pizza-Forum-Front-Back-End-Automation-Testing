@@ -2,7 +2,7 @@ const { Builder, By } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:8080/php_pizza_forum/';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8080/index.php';
 
 describe('Smoke Test', function () {
   this.timeout(30000);
