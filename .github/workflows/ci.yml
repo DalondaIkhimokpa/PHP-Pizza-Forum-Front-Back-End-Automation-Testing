@@ -41,7 +41,7 @@ jobs:
       - name: 🧪 Run Contact Form Selenium Test
         env:
           BASE_URL: http://localhost:8080/php_pizza_forum/
-        run: npx mocha tests/selenium/contact-form.test.js
+        run: npx mocha tests/selenium/contact-form-test.js
 
       - name: 📁 Upload failure screenshots (if any)
         if: failure()
