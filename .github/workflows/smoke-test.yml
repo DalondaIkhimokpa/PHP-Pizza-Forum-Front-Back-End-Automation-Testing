@@ -49,7 +49,6 @@ jobs:
           CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
           JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
           CHROMEDRIVER_URL=$(curl -s $JSON_URL | jq -r --arg ver "$CHROME_VERSION" '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url')
-
           echo "Downloading ChromeDriver from $CHROMEDRIVER_URL"
           curl -sS -o chromedriver.zip "$CHROMEDRIVER_URL"
           unzip chromedriver.zip
@@ -69,10 +68,16 @@ jobs:
         run: |
           curl -I http://localhost:8080/php_pizza_forum/ || (echo "Site not up!" && exit 1)
 
+      - name: Curl page output (debug)
+        run: |
+          curl -s http://localhost:8080/php_pizza_forum/ > debug.html
+          head -n 50 debug.html
+
       - name: Run Selenium Smoke Test
         env:
           BASE_URL: http://localhost:8080/php_pizza_forum/
         run: |
           npx mocha tests/selenium/smoke-test.js
+
 
 
