@@ -61,7 +61,7 @@ jobs:
 
       - name: Start PHP Server
         run: |
-          php -S localhost:8080 -t . > /dev/null 2>&1 &
+          php -S localhost:8080 -t php_pizza_forum > /dev/null 2>&1 &
           sleep 3
 
       - name: Check if site is up
@@ -70,12 +70,12 @@ jobs:
 
       - name: Curl page output (debug)
         run: |
-          curl -s http://localhost:8080/php_pizza_forum/ > debug.html
+          curl -s http://localhost:8080/ > debug.html
           head -n 50 debug.html
 
       - name: Run Selenium Smoke Test
         env:
-          BASE_URL: http://localhost:8080/php_pizza_forum/
+          BASE_URL: http://localhost:8080/
         run: |
           npx mocha tests/selenium/smoke-test.js
 

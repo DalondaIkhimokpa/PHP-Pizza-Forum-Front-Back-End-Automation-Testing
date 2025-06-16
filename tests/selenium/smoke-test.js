@@ -22,7 +22,7 @@ describe('Smoke Test', function () {
     await driver.get(process.env.BASE_URL);
     const body = await driver.findElement(By.tagName('body')).getText();
     console.log('📄 Page body snippet:', body.substring(0, 200));
-    assert.ok(body.length > 0, 'Page body should not be empty');
+    assert.ok(body.length > 0, 'Page body should be on the index page');
   });
 
   after(async () => {
