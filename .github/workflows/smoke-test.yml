@@ -10,15 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify PHP files exist
+      - name: Verify Selenium tests files exist
         run: |
           echo "Checking critical files:"
-          ls -la templates/add.php
-          ls -la config/conn_db.php
-          ls -la index.php
-          [ -f templates/add.php ] || exit 1
-          [ -f config/conn_db.php ] || exit 1
-          [ -f index.php ] || exit 0 # index.php is optional for this test
+          ls -la tests/smoke-test.js
+          ls -la tests/SeleniumTest.js
 
       - name: Verify database connection
         run: |
