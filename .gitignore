@@ -4,8 +4,15 @@
 config/conn_db.php
 test_db.php
 Notes
-.DS_Store
 # .gitignore
 .env
 .env.*
 .sql
+# Ignore macOS system files
+.DS_Store
+
+# Ignore node modules
+node_modules/
+
+# Ignore SQL schema files
+schema.sql
