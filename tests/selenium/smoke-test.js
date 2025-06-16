@@ -1,15 +1,20 @@
-const { Builder, By, until } = require('selenium-webdriver');
+const { Builder, By } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 
-describe('Smoke Test', function() {
-  this.timeout(60000);
+describe('Smoke Test', function () {
+  this.timeout(10000);
   let driver;
 
   before(async () => {
+    const options = new chrome.Options();
+    options.addArguments('--headless=new'); // <-- use "--headless" or "--headless=new" for newer versions
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
+
     driver = await new Builder()
       .forBrowser('chrome')
-      .setChromeOptions(new chrome.Options().headless())
+      .setChromeOptions(options)
       .build();
   });
 
@@ -19,5 +24,7 @@ describe('Smoke Test', function() {
     assert.match(title, /Pizza/i, 'Page title should contain "Pizza"');
   });
 
-  after(async () => await driver.quit());
+  after(async () => {
+    if (driver) await driver.quit();
+  });
 });
