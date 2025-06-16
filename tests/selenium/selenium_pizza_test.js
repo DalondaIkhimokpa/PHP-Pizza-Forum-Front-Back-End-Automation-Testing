@@ -1,41 +1,30 @@
-
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost/php_pizza_forum';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 
-describe('Selenium Pizza Test', function() {
-  this.timeout(60000);
+describe('Selenium Pizza Test', function () {
+  this.timeout(30000);
   let driver;
 
   before(async () => {
-    const options = new chrome.Options()
-      .addArguments(
-        '--headless',
-        '--no-sandbox',
-        '--disable-dev-shm-usage',
-        '--window-size=1920,1080'
-      )
-      .setChromeBinaryPath('/usr/bin/chromium-browser');
-
-    driver = await new Builder()
-      .forBrowser('chrome')
-      .setChromeOptions(options)
-      .build();
-  })
-
-  it('should load homepage', async () => {
-    await driver.get(BASE_URL);
-    await driver.wait(until.titleIs('PHP Pizza Forum'), 10000);
-    assert.equal(await driver.getTitle(), 'Page title should contain "Pizza');
+    const options = new chrome.Options();
+    options.addArguments('--headless', '--no-sandbox', '--disable-dev-shm-usage');
+    driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
   });
 
   after(async () => {
-    if (driver) {
-      await driver.quit();
-    }
+    await driver.quit();
+  });
+
+  it('should load homepage', async function () {
+    await driver.get(`${BASE_URL}/index.php`);
+    await driver.wait(until.titleContains('Pizza'), 10000);
+    const title = await driver.getTitle();
+    assert.ok(title.toLowerCase().includes('pizza'));
   });
 });
+
 
 

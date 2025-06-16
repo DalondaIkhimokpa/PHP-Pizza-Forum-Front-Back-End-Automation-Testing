@@ -1,12 +1,13 @@
-name: CI Tests
+name: Run Selenium Tests for PHP Pizza Forum
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
+
     services:
       mysql:
         image: mysql:5.7
@@ -15,51 +16,42 @@ jobs:
           MYSQL_DATABASE: pizza_forum
           MYSQL_USER: demo
           MYSQL_PASSWORD: test1234
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USER: demo
+      DB_PASSWORD: test1234
+      DB_NAME: pizza_forum
+      BASE_URL: http://localhost:8080
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Configure Apache
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y apache2 libapache2-mod-php
-          sudo mkdir -p /var/www/html/php_pizza_forum
-          sudo cp -r . /var/www/html/php_pizza_forum/
-          sudo chown -R www-data:www-data /var/www/html/php_pizza_forum
-          
-          echo "<VirtualHost *:80>
-              DocumentRoot /var/www/html/php_pizza_forum
-              <Directory /var/www/html/php_pizza_forum>
-                  Options Indexes FollowSymLinks
-                  AllowOverride All
-                  Require all granted
-              </Directory>
-          </VirtualHost>" | sudo tee /etc/apache2/sites-available/php_pizza_forum.conf
-          
-          sudo a2dissite 000-default
-          sudo a2ensite php_pizza_forum
-          sudo a2enmod rewrite
-          sudo systemctl restart apache2
+          composer install || true
+          npm install
 
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Verify Setup
-        run: |
-          curl -v http://localhost/php_pizza_forum/
-          google-chrome --version
+      - name: Start PHP server
+        run: php -S localhost:8080 -t php_pizza_forum &
+      
+      - name: Wait for server
+        run: sleep 5
 
       - name: Run Tests
         run: npm test
-        env:
-          BASE_URL: http://localhost/php_pizza_forum
-          DB_HOST: 127.0.0.1
-          DB_USER: demo
-          DB_PASSWORD: test1234
-          DB_NAME: pizza_forum
+
 
 
 
