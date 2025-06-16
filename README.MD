@@ -9,7 +9,6 @@ A community-driven platform for pizza enthusiasts to share and discover amazing 
 ![PHP](https://img.shields.io/badge/PHP-Ready-blue)
 ![Selenium](https://img.shields.io/badge/Selenium-Integrated-green)
 ![PHPUnit](https://img.shields.io/badge/PHPUnit-Tested-success)
-[![CI Tests](https://github.com/DalondaIkhimokpa/PHP-Pizza-Forum-Front-Back-End-Automation-Testing/actions/workflows/ci.yml/badge.svg)](https://github.com/DalondaIkhimokpa/PHP-Pizza-Forum-Front-Back-End-Automation-Testing/actions/workflows/ci.yml)
 [![Selenium Tests](https://github.com/DalondaIkhimokpa/PHP-Pizza-Forum-Front-Back-End-Automation-Testing/actions/workflows/smoke-test.yml/badge.svg)](https://github.com/DalondaIkhimokpa/PHP-Pizza-Forum-Front-Back-End-Automation-Testing/actions/workflows/smoke-test.yml)
 
 ## Features
